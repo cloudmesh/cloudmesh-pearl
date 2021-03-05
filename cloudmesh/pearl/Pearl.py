@@ -12,6 +12,7 @@ class Pearl(object):
         except:
             self.username = None
 
+
     def _execute(self, command):
         command = f"ssh {self.username}@{self.host} '{command}'"
         print (command)
@@ -31,9 +32,12 @@ class Pearl(object):
     def batch(self, SCRIPT):
         pass
 
-    def run(self, **kwargs):
-        # OPTIONS
-        pass
+    def run(self, cpu=None, gpu=None):
+        gpu = gpu or 1
+        cpu = cpu or 1
+        command = f"srun -n {cpu} --gres=gpu:{gpu} --pty /bin/bash"
+        srun = f"ssh -t {self.username}@{self.host} '{command}'"
+        os.system(srun)
 
     def sync_to(self, DIR):
         pass
