@@ -12,6 +12,9 @@ class Pearl(object):
         except:
             self.username = None
 
+    def check_user(self):
+        if self.username is None:
+            raise ValueError("Your user name for perl is not set")
 
     def _execute(self, command):
         command = f"ssh {self.username}@{self.host} '{command}'"
@@ -19,6 +22,8 @@ class Pearl(object):
         os.system(command)
 
     def user(self, username):
+        if "@" in username:
+            username = username.split("@")[0]
         self.username = self.variables["pearl_username"] = username
 
     def queue(self):

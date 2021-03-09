@@ -23,7 +23,6 @@ class PearlCommand(PluginCommand):
                 pearl sync to DIR
                 pearl sync from
                 pearl fuse DIR
-                pearl
 
           Interfaceing with pearl
 
@@ -37,11 +36,21 @@ class PearlCommand(PluginCommand):
 
         pearl = Pearl()
 
+
+
         if arguments.user:
 
             pearl.user(arguments.USER)
+            return
 
-        elif arguments.queue:
+        try:
+            pearl.check_user()
+        except ValueError:
+            Console.error("Please set the user with\n")
+            Console.msg("   cms pearl user YOURUSERID\n")
+
+
+        if arguments.queue:
 
             pearl.queue()
 
