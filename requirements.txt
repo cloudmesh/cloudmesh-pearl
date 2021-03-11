@@ -8,3 +8,6 @@ cloudmesh-configuration
 #
 #    pip-compile setup.py
 #
+jupyter-lab
+jupyter_contrib_nbextensions
+papermill
