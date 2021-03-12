@@ -29,3 +29,43 @@ and on Windows with
 $ python -m venv ~/ENV3
 $ source ~/ENV3/bin/activate 
 ```
+
+
+```
+module load Python/3.7.4-GCCcore-8.3.0
+python --version
+python -m venv ENV3
+source ~/ENV3/bin/activate
+pip install jupyterlab
+pip install pip -U
+pip install matplotlib
+```
+
+```
+jupyter nbconvert --allow-errors --execute --to notebook  --output=Untitles-output.ipynb  Untitled.ipynb
+```
+
+```bash
+echo "source ~/ENV3/bin/activate; which python" | ssh -i /home/green/.ssh/id_rsa.pub pearl063@ui.pearl.scd.stfc.ac.uk /bin/bash -l
+```
+
+```
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+
+source /etc/profile
+module load Python/3.7.4-GCCcore-8.3.0
+
+source ~/ENV3/bin/activate
+
+PATH=$HOME/.local/bin:$HOME/bin:$PATH
+```

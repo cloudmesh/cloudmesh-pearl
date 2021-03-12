@@ -2,6 +2,7 @@ from cloudmesh.common.variables import Variables
 import os
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.console import Console
+import textwrap
 
 class Pearl(object):
 
@@ -33,10 +34,9 @@ class Pearl(object):
             print (command)
         os.system(command)
 
-<<<<<<< HEAD
     def module(self):
         self.ssh(execute="source /etc/profile; module avail")
-=======
+
     def set_verbose(self, on=None):
         if on is None or on:
             self.variables["pearl.verbose"] = True
@@ -46,7 +46,6 @@ class Pearl(object):
             os.system("cms debug on")
         else:
             os.system("cms debug off")
->>>>>>> a7de565c65f50b1d016c7b53c4175d971230ab2c
 
     def set_user(self, username):
         if "@" in username:
@@ -60,33 +59,59 @@ class Pearl(object):
     def queue(self):
         self._execute("squeue")
 
-    def ssh(self, execute=None):
+    def ssh(self, execute=None, shell=True):
         if execute is not None:
-            execute = f'"{execute}"'
+            if not shell:
+                execute = f'"{execute}"'
+                command = f"ssh -i {self.key} {self.username}@{self.host} {execute}"
+            else:
+                command = f'echo "{execute}" |'\
+                    f' ssh -i /home/green/.ssh/id_rsa.pub {self.username}@{self.host} /bin/bash -l'
         else:
-            execute = ""
-<<<<<<< HEAD
-        command = f'ssh {self.username}@{self.host} {execute}'
-        print (command)
-=======
-        command = f"ssh -i {self.key} {self.username}@{self.host} {execute}"
+            command = f"ssh -i {self.key} {self.username}@{self.host}"
         if self.verbose:
             print (command)
->>>>>>> a7de565c65f50b1d016c7b53c4175d971230ab2c
         os.system(command)
 
-    def batch(self, SCRIPT):
-        pass
+    def batch(self, script, name="script", cpu=1, gpu=1, duration="00:00:01"):
+        duration = duration or "00:00:01"
+        batch_script = f"""
+        !/bin/bash                                                                                                              
 
-    def notebook(self, name=None, cpu=None, gpu=None):
+        #SBATCH -p pearl # partition (queue)                                                                                     
+        #SBATCH --job-name={name}
+        #SBATCH -n {cpu} # number of CPU cores
+        #SBATCH --gres=gpu:{gpu}
+        #SBATCH -t {duration} # time (D-HH:MM)
+        
+        echo "#"
+        echo "# PYTHON"
+        echo "#"
+        source ~/ENV3/bin/activate
+        which python
+        python --version
+        echo "#"
+        echo "# NVIDIA"
+        echo "#"
+        nvidia-smi
+        echo "#"        
+        # 
+        # COMMANDS
+        #
+        """ + textwrap.dedent(script).strip() + "\n#\n"
+
+        return batch_script
+
+    def notebook(self, name=None, cpu=None, gpu=None, duration=None):
         gpu = gpu or 1
         cpu = cpu or 1
+        script = self.batch(name, cpu=cpu, gpu=gpu, duration=duration)
+        print(script)
+
         #command = f"srun -n {cpu} --gres=gpu:{gpu} --pty /bin/bash"
         #srun = f"ssh -t {self.username}@{self.host} '{command}'"
         #os.system(srun)
-
         pass
-
 
     def run(self, cpu=None, gpu=None):
         gpu = gpu or 1
@@ -99,14 +124,18 @@ class Pearl(object):
         self.ssh(f"ls -lisa {directory}")
 
     def sync_put(self, directory):
-        command = f"rsync -i {self.key} -r {directory} {self.username}@{self.host}:{directory}"
+        command = f"rsync -r {directory} {self.username}@{self.host}:notebooks/{directory}"
         if self.verbose:
             print (command)
         os.system(command)
-        self.ls(directory)
+        self.ls(f"notebooks/{directory}")
 
     def sync_get(self, directory):
-        command = f"rsync -i {self.key} -r {self.username}@{self.host}:{directory} {directory}"
+        remote = f"notebooks/{directory}"
+        local = directory
+        if local == ".":
+            local = os.getcwd()
+        command = f"rsync -r {self.username}@{self.host}:{remote} {local}"
         if self.verbose:
             print (command)
         os.system(command)
@@ -121,5 +150,6 @@ class Pearl(object):
         print("Key:     ", self.key)
         print("Verbose: ", self.verbose)
         print("Queues")
-        self.ssh(execute="sinfo; squeue -l")
+        print()
+        self.ssh(execute="echo; sinfo; echo; squeue -l")
         print()

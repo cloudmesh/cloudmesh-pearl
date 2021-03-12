@@ -23,7 +23,7 @@ class PearlCommand(PluginCommand):
                 pearl user USER
                 pearl key KEY
                 pearl queue
-                pearl ssh
+                pearl ssh [COMMAND...]
                 pearl batch SCRIPT
                 pearl run [--cpu=CPU] [--gpu=GPU] [--output=OUTPUT]
                 pearl sync put DIR
@@ -31,15 +31,11 @@ class PearlCommand(PluginCommand):
                 pearl fuse DIR
                 pearl venv [VENV] [--python=PYTHON] [-y|-n]
                 pearl install
-<<<<<<< HEAD
                 pearl notebook NAME [--cpu=CPU] [--gpu=GPU] [--output=OUTPUT]
                 pearl doc
                 pearl module
                 pearl info
-=======
-                pearl info
                 pearl verbose [ON]
->>>>>>> a7de565c65f50b1d016c7b53c4175d971230ab2c
 
           Interfaceing with pearl
 
@@ -61,17 +57,12 @@ class PearlCommand(PluginCommand):
         arguments.cpu = arguments["--cpu"]
         arguments.VENV = arguments.VENV or "PEARL"
 
-<<<<<<< HEAD
         VERBOSE(arguments)
         if arguments.doc:
 
             Shell.browser('https://pearl-cluster.readthedocs.io/en/latest/')
 
         elif arguments.user:
-=======
-        # VERBOSE(arguments)
-        if arguments.user:
->>>>>>> a7de565c65f50b1d016c7b53c4175d971230ab2c
 
             pearl.set_user(arguments.USER)
             return
@@ -142,7 +133,11 @@ class PearlCommand(PluginCommand):
 
         elif arguments.ssh:
 
-            pearl.ssh()
+            if len (arguments.COMMAND) > 0:
+                arguments.COMMAND = ' '.join(arguments.COMMAND)
+            else:
+                arguments.COMMAND = None
+            pearl.ssh(execute=arguments.COMMAND)
 
         elif arguments.run:
 
