@@ -111,7 +111,51 @@ If this works, pleas log out and we can now test a notebook.
 
 For simplicity we place all notebooks in the directory ~/notebooks on your local machine
 
-Please copy the notebook from 
+Please copy the Simple notebook from 
 
+* <https://raw.githubusercontent.com/cloudmesh/cloudmesh-pearl/main/example/Simple.ipynb>
 
+into the folder ~/notebooks
+
+Next, execute it with 
+
+```
+cd ~/pearl
+cms pearl notebook Simple.ipynb --force
+```
+
+This script will do several things
+
+1. It will create a batch script for executing the notebook in the batch queuing system
+2. It will copy the notbook and the script via an rsync command to pearl
+3. It will submit the batch script and print information about the process
+
+Now the script is executed.
+
+YOu can check the status in the queue with 
+
+```
+cms pearl queue
+```
+
+If you do not see your job anymore in it, it is already completed.
+
+To fetch the results you can do this with
+
+```
+cms pearl sync get
+```
+This fetches the entire content of the notebooks directory that is stored on pearl.
+
+The output of the notebook not only creates a log file under the slurm job id, but also creates a new notebook 
+that you can view on your local computer when you open the file
+
+```
+Simple-output.ipynb
+```
+
+Open it in jupyter-lab
+
+Please note that the contents of these files are overwritten and if you want to save them you 
+have to place them into a backup directory. 
 
