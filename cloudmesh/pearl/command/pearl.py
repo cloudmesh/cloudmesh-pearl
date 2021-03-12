@@ -6,6 +6,7 @@ from pprint import pprint
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.pearl.Pearl import Pearl
 from cloudmesh.common.util import yn_choice
+from cloudmesh.common.Shell import Shell
 import os
 
 PYTHON="python3"
@@ -29,6 +30,10 @@ class PearlCommand(PluginCommand):
                 pearl fuse DIR
                 pearl venv [VENV] [--python=PYTHON] [-y|-n]
                 pearl install
+                pearl notebook NAME [--cpu=CPU] [--gpu=GPU] [--output=OUTPUT]
+                pearl doc
+                pearl module
+                pearl info
 
           Interfaceing with pearl
 
@@ -51,7 +56,11 @@ class PearlCommand(PluginCommand):
         arguments.VENV = arguments.VENV or "PEARL"
 
         VERBOSE(arguments)
-        if arguments.user:
+        if arguments.doc:
+
+            Shell.browser('https://pearl-cluster.readthedocs.io/en/latest/')
+
+        elif arguments.user:
 
             pearl.set_user(arguments.USER)
             return
@@ -95,10 +104,21 @@ class PearlCommand(PluginCommand):
             # pearl.ssh(execute="pip install cloudmesh-pearl")
             # pearl.ssh(execute="pearl")
 
+        elif arguments.module:
+
+            pearl.module()
+
+        elif arguments.info:
+
+            pearl.info()
 
         elif arguments.queue:
 
             pearl.queue()
+
+        elif arguments.notebook:
+
+            pearl.notebook(arguments.NAME)
 
         elif arguments.ssh:
 

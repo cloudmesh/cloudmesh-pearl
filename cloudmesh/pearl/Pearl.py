@@ -20,6 +20,9 @@ class Pearl(object):
         print (command)
         os.system(command)
 
+    def module(self):
+        self.ssh(execute="source /etc/profile; module avail")
+
     def set_user(self, username):
         if "@" in username:
             username = username.split("@")[0]
@@ -33,12 +36,22 @@ class Pearl(object):
             execute = f'"{execute}"'
         else:
             execute = ""
-        command = f"ssh {self.username}@{self.host} {execute}"
+        command = f'ssh {self.username}@{self.host} {execute}'
         print (command)
         os.system(command)
 
     def batch(self, SCRIPT):
         pass
+
+    def notebook(self, name=None, cpu=None, gpu=None):
+        gpu = gpu or 1
+        cpu = cpu or 1
+        #command = f"srun -n {cpu} --gres=gpu:{gpu} --pty /bin/bash"
+        #srun = f"ssh -t {self.username}@{self.host} '{command}'"
+        #os.system(srun)
+
+        pass
+
 
     def run(self, cpu=None, gpu=None):
         gpu = gpu or 1
@@ -65,3 +78,7 @@ class Pearl(object):
     def fuse(self, DIR):
         pass
 
+    def info(self):
+        print("Username:", self.username)
+        print("Queues")
+        self.ssh(execute="sinfo; squeue -l")
