@@ -21,6 +21,7 @@ class PearlCommand(PluginCommand):
 
           Usage:
                 pearl user USER
+                pearl key KEY
                 pearl queue
                 pearl ssh
                 pearl batch SCRIPT
@@ -30,10 +31,15 @@ class PearlCommand(PluginCommand):
                 pearl fuse DIR
                 pearl venv [VENV] [--python=PYTHON] [-y|-n]
                 pearl install
+<<<<<<< HEAD
                 pearl notebook NAME [--cpu=CPU] [--gpu=GPU] [--output=OUTPUT]
                 pearl doc
                 pearl module
                 pearl info
+=======
+                pearl info
+                pearl verbose [ON]
+>>>>>>> a7de565c65f50b1d016c7b53c4175d971230ab2c
 
           Interfaceing with pearl
 
@@ -55,12 +61,17 @@ class PearlCommand(PluginCommand):
         arguments.cpu = arguments["--cpu"]
         arguments.VENV = arguments.VENV or "PEARL"
 
+<<<<<<< HEAD
         VERBOSE(arguments)
         if arguments.doc:
 
             Shell.browser('https://pearl-cluster.readthedocs.io/en/latest/')
 
         elif arguments.user:
+=======
+        # VERBOSE(arguments)
+        if arguments.user:
+>>>>>>> a7de565c65f50b1d016c7b53c4175d971230ab2c
 
             pearl.set_user(arguments.USER)
             return
@@ -71,7 +82,16 @@ class PearlCommand(PluginCommand):
             Console.error("Please set the user with\n")
             Console.msg("   cms pearl user YOURUSERID\n")
 
-        if arguments.venv:
+        if arguments.info:
+            pearl.info()
+
+        elif arguments.verbose:
+            pearl.set_verbose(arguments.ON)
+
+        elif arguments.key:
+            pearl.set_key(arguments.KEY)
+
+        elif arguments.venv:
 
             if not arguments.VENV.startswith("~"):
                 arguments.VENV = f"~/{arguments.VENV}"
