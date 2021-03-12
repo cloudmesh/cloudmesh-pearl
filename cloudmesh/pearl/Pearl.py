@@ -3,6 +3,7 @@ import os
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.console import Console
 import textwrap
+from cloudmesh.common.util import writefile
 
 class Pearl(object):
 
@@ -73,16 +74,24 @@ class Pearl(object):
             print (command)
         os.system(command)
 
-    def batch(self, script, name="script", cpu=1, gpu=1, duration="00:00:01"):
+    def batch(self, script):
+        self.sync_put(".")
+        self.ssh(f"sbatch notebooks/{script}")
+        self.sync_get(".")
+
+    def generate_notebook_batch(self, notebook=None, name="script", cpu=1, gpu=1, duration="00:00:01"):
+        stem = notebook.replace(".ipynb", "")
         duration = duration or "00:00:01"
-        batch_script = f"""
-        !/bin/bash                                                                                                              
+
+        batch_script = textwrap.dedent(f"""
+        #!/bin/bash                                                                                                              
 
         #SBATCH -p pearl # partition (queue)                                                                                     
         #SBATCH --job-name={name}
         #SBATCH -n {cpu} # number of CPU cores
         #SBATCH --gres=gpu:{gpu}
         #SBATCH -t {duration} # time (D-HH:MM)
+        #SBATCH --chdir=notebooks
         
         echo "#"
         echo "# PYTHON"
@@ -98,20 +107,30 @@ class Pearl(object):
         # 
         # COMMANDS
         #
-        """ + textwrap.dedent(script).strip() + "\n#\n"
+        """).strip() + "\n"
+        end_script = "\n#\n"
 
-        return batch_script
+        notebook_script = f"jupyter nbconvert --allow-errors --execute --to notebook  --output={stem}-output.ipynb  {notebook}"
+        return batch_script + notebook_script + end_script
 
-    def notebook(self, name=None, cpu=None, gpu=None, duration=None):
+    def notebook(self, name=None, cpu=None, gpu=None, duration=None, force=False):
         gpu = gpu or 1
         cpu = cpu or 1
-        script = self.batch(name, cpu=cpu, gpu=gpu, duration=duration)
-        print(script)
+        duration = duration or "00:00:01"
+        stem = name.replace(".ipynb", "")
+        script = name.replace(".ipynb", ".sh")
 
-        #command = f"srun -n {cpu} --gres=gpu:{gpu} --pty /bin/bash"
-        #srun = f"ssh -t {self.username}@{self.host} '{command}'"
-        #os.system(srun)
-        pass
+        if force or not os.path.exists(script) :
+            content = self.generate_notebook_batch(
+                notebook=name,
+                name=stem,
+                cpu=cpu,
+                gpu=gpu,
+                duration=duration
+            )
+            writefile(script, content=content)
+        self.batch(script)
+
 
     def run(self, cpu=None, gpu=None):
         gpu = gpu or 1

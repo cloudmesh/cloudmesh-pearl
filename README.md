@@ -10,26 +10,40 @@ Documentation
 
 [![image](https://img.shields.io/github/license/TankerHQ/python-cloudmesh-pearl.svg)](https://github.com/TankerHQ/python-cloudmesh-pearl/blob/main/LICENSE)
 
-This command will help you to interact with perl from a remote machine easily.
-The reason we wrote this program instead of using ssh directly is to focus on
-the development of code on your local computer before you run them on perl.
+This command will help you to interact with pearl from a remote machine easily and allow you to develop jupyter 
+notebooks locally on your computer that you then execute on pearl.
 
-To use the command you have to install it with pip in python3 virtualenv
+The implementation is based on cloudmesh and allows convenient execution either from the cloudmesh shell or a terminal.
+
+## INstalation on your local Computer
+
+To use the command you have to install it with pip in python3 virtualenv on your local computer.
 
 If you do not have a venv you can create one on Linux with
 
 ```bash
 $ python3 -m venv ~/ENV3
 $ source ~/ENV3/bin/activate 
+pip install cloudmesh-pearl -U
 ```
 
 and on Windows with 
 
 ```bash
 $ python -m venv ~/ENV3
-$ source ~/ENV3/bin/activate 
+$ \ENV3\Script\activate 
+pip install cloudmesh-pearl -U
 ```
 
+Test out if the install was successful with 
+
+```
+cms help
+```
+
+## Installation on Pearl
+
+After your first logi with regular ssh please execute the following commands
 
 ```
 module load Python/3.7.4-GCCcore-8.3.0
@@ -41,16 +55,12 @@ pip install pip -U
 pip install matplotlib
 ```
 
-```
-jupyter nbconvert --allow-errors --execute --to notebook  --output=Untitles-output.ipynb  Untitled.ipynb
-```
+This will create a python3 venv in the directory ~/ENV3
 
-```bash
-echo "source ~/ENV3/bin/activate; which python" | ssh -i /home/green/.ssh/id_rsa.pub pearl063@ui.pearl.scd.stfc.ac.uk /bin/bash -l
-```
+Now, please replace the .bashrc and .bash_profile files on perl with the following content:
 
 ```
-# .bashrc
+# .bashrc and .bash_profile
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -69,3 +79,39 @@ source ~/ENV3/bin/activate
 
 PATH=$HOME/.local/bin:$HOME/bin:$PATH
 ```
+
+## Using notebooks on your local computer
+
+### Manual Page
+
+You can see the manual page with 
+
+```
+cms pearl help 
+```
+
+### Set up the pearl user
+
+To simplify the setup, you will activate your username (we assuume your key is in `~/.ssh/id_rsa`)
+
+```
+cms pearl user pearl????
+```
+where ??? needs to be replaced with the username number you got from the adminitsrtaor
+
+Next we want to test if you can login with 
+
+```
+cms pearl ssh
+```
+
+## Running notebooks
+
+If this works, pleas log out and we can now test a notebook.
+
+For simplicity we place all notebooks in the directory ~/notebooks on your local machine
+
+Please copy the notebook from 
+
+
+

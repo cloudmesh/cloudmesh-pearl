@@ -26,18 +26,18 @@ class PearlCommand(PluginCommand):
                 pearl ssh [COMMAND...]
                 pearl batch SCRIPT
                 pearl run [--cpu=CPU] [--gpu=GPU] [--output=OUTPUT]
-                pearl sync put DIR
-                pearl sync get DIR
+                pearl sync put [DIR]
+                pearl sync get [DIR]
                 pearl fuse DIR
                 pearl venv [VENV] [--python=PYTHON] [-y|-n]
                 pearl install
-                pearl notebook NAME [--cpu=CPU] [--gpu=GPU] [--output=OUTPUT]
+                pearl notebook NAME [--cpu=CPU] [--gpu=GPU] [--duration=DURATION] [--force]
                 pearl doc
                 pearl module
                 pearl info
                 pearl verbose [ON]
 
-          Interfaceing with pearl
+          Interfacing with pearl
 
           Arguments:
               USER     the username
@@ -56,6 +56,8 @@ class PearlCommand(PluginCommand):
         arguments.gpu = arguments["--gpu"]
         arguments.cpu = arguments["--cpu"]
         arguments.VENV = arguments.VENV or "PEARL"
+        arguments.FORCE = arguments["--force"]
+        arguments.DIR = arguments.DIR or "."
 
         VERBOSE(arguments)
         if arguments.doc:
@@ -128,8 +130,12 @@ class PearlCommand(PluginCommand):
             pearl.queue()
 
         elif arguments.notebook:
-
-            pearl.notebook(arguments.NAME)
+            # pearl notebook NAME [--cpu=CPU] [--gpu=GPU] [--output=OUTPUT]
+            pearl.notebook(name=arguments.NAME,
+                           cpu=arguments.CPU,
+                           gpu=arguments.GPU,
+                           duration=arguments.DURATION,
+                           force=arguments.FORCE)
 
         elif arguments.ssh:
 
@@ -150,6 +156,10 @@ class PearlCommand(PluginCommand):
         elif arguments.sync and arguments.get:
 
             pearl.sync_get(arguments.DIR)
+
+        elif arguments.batch:
+
+            pearl.batch(arguments.SCRIPT)
 
         else:
             Console.error("check your usage")
