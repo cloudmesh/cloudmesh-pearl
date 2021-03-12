@@ -15,7 +15,7 @@ notebooks locally on your computer that you then execute on pearl.
 
 The implementation is based on cloudmesh and allows convenient execution either from the cloudmesh shell or a terminal.
 
-## installation on your local Computer
+## Installation on your local Computer
 
 To use the command you have to install it with pip in python3 virtualenv on your local computer.
 
@@ -43,15 +43,15 @@ cms help
 
 ## Installation on Pearl
 
-After your first logi with regular ssh please execute the following commands
+After your first login with regular ssh please execute the following commands
 
 ```
 module load Python/3.7.4-GCCcore-8.3.0
 python --version
 python -m venv ENV3
 source ~/ENV3/bin/activate
-pip install jupyterlab
 pip install pip -U
+pip install jupyterlab
 pip install matplotlib
 ```
 
