@@ -143,6 +143,9 @@ class Pearl(object):
         self.ssh(f"ls -lisa {directory}")
 
     def sync_put(self, directory):
+
+        self.ssh(f"mkdir - p notebooks/{directory}")
+
         command = f"rsync -r {directory} {self.username}@{self.host}:notebooks/{directory}"
         if self.verbose:
             print (command)
