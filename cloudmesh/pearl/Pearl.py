@@ -144,9 +144,9 @@ class Pearl(object):
 
     def sync_put(self, directory):
 
-        self.ssh(f"mkdir - p notebooks/{directory}")
+        self.ssh(f"mkdir -p notebooks/{directory}")
 
-        command = f"rsync -r {directory} {self.username}@{self.host}:notebooks/{directory}"
+        command = f"rsync -v --stats --progress -r {directory} {self.username}@{self.host}:notebooks/{directory}"
         if self.verbose:
             print (command)
         os.system(command)
@@ -157,7 +157,7 @@ class Pearl(object):
         local = directory
         if local == ".":
             local = os.getcwd()
-        command = f"rsync -r {self.username}@{self.host}:{remote} {local}"
+        command = f"rsync -v --stats --progress -r {self.username}@{self.host}:{remote} {local}"
         if self.verbose:
             print (command)
         os.system(command)
