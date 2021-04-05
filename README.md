@@ -10,12 +10,12 @@ Documentation
 
 [![image](https://img.shields.io/github/license/TankerHQ/python-cloudmesh-pearl.svg)](https://github.com/TankerHQ/python-cloudmesh-pearl/blob/main/LICENSE)
 
-This command will help you to interact with pearl from a remote machine easily and allow you to develop jupyter 
+This command will help you to interact with pearl from a remote machine easily and allow you to develop Jupyter 
 notebooks locally on your computer that you then execute on pearl.
 
 The implementation is based on cloudmesh and allows convenient execution either from the cloudmesh shell or a terminal.
 
-## INstalation on your local Computer
+## Installation on your local Computer
 
 To use the command you have to install it with pip in python3 virtualenv on your local computer.
 
@@ -43,15 +43,15 @@ cms help
 
 ## Installation on Pearl
 
-After your first logi with regular ssh please execute the following commands
+After your first login with regular ssh please execute the following commands
 
 ```
 module load Python/3.7.4-GCCcore-8.3.0
 python --version
 python -m venv ENV3
 source ~/ENV3/bin/activate
-pip install jupyterlab
 pip install pip -U
+pip install jupyterlab
 pip install matplotlib
 ```
 
@@ -67,7 +67,6 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-# Uncomment the following line if you don't like systemctl's auto-paging feature:
 export SYSTEMD_PAGER=
 
 # User specific aliases and functions
@@ -92,14 +91,14 @@ cms pearl help
 
 ### Set up the pearl user
 
-To simplify the setup, you will activate your username (we assuume your key is in `~/.ssh/id_rsa`)
+To simplify the setup, you will activate your username (we assume your key is in `~/.ssh/id_rsa`)
 
 ```
 cms pearl user pearl????
 ```
-where ??? needs to be replaced with the username number you got from the adminitsrtaor
+where ??? needs to be replaced with the username number you got from the administrator
 
-Next we want to test if you can login with 
+Next, we want to test if you can log in with 
 
 ```
 cms pearl ssh
@@ -107,9 +106,9 @@ cms pearl ssh
 
 ## Running notebooks
 
-If this works, pleas log out and we can now test a notebook.
+If this works, please log out and we can now test a notebook.
 
-For simplicity we place all notebooks in the directory ~/notebooks on your local machine
+For simplicity, we place all notebooks in the directory ~/notebooks on your local machine
 
 Please copy the Simple notebook from 
 
@@ -127,7 +126,7 @@ cms pearl notebook Simple.ipynb --force
 This script will do several things
 
 1. It will create a batch script for executing the notebook in the batch queuing system
-2. It will copy the notbook and the script via an rsync command to pearl
+2. It will copy the notebook and the script via a rsync command to pearl
 3. It will submit the batch script and print information about the process
 
 Now the script is executed.
@@ -145,7 +144,7 @@ To fetch the results you can do this with
 ```
 cms pearl sync get
 ```
-This fetches the entire content of the notebooks directory that is stored on pearl.
+This fetches the entire content of the `notebooks` directory that is stored on pearl.
 
 The output of the notebook not only creates a log file under the slurm job id, but also creates a new notebook 
 that you can view on your local computer when you open the file
