@@ -1,9 +1,12 @@
 from cloudmesh.common.variables import Variables
 import os
 from cloudmesh.common.util import path_expand
+from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common.util import banner
 from cloudmesh.common.console import Console
 import textwrap
 from cloudmesh.common.util import writefile
+from glob import glob
 
 class Pearl(object):
 
@@ -144,22 +147,45 @@ class Pearl(object):
 
     def sync_put(self, directory):
 
-        self.ssh(f"mkdir -p notebooks/{directory}")
+        from_dir = os.getcwd()
 
-        command = f"rsync -v --stats --progress -r {directory} {self.username}@{self.host}:notebooks/{directory}"
+        if directory != ".":
+            from_dir = os.path.join(from_dir, directory)
+        else:
+            from_dir = from_dir + "/*"
+
+
+        banner(f"Put content to pearl from {from_dir}")
+        dirs = glob(f"{from_dir}")
+        print ("\n".join(dirs))
+        print()
+
+        if directory != ".":
+            self.ssh(f"mkdir -p {directory}")
+
+        command = f"rsync -v --stats --progress -r {from_dir} {self.username}@{self.host}:{directory}"
         if self.verbose:
             print (command)
+
         os.system(command)
-        self.ls(f"notebooks/{directory}")
+        self.ls(f"{directory}")
 
     def sync_get(self, directory):
-        remote = f"notebooks/{directory}"
+        exclude = "--exclude " + " --exclude ".join([
+                                                     "ENV3",
+                                                     "Desktop",
+                                                     "Download",
+                                                     ".cache",
+                                                     ".config",
+                                                     '".bash*"', '".emacs*"', '".idea*"', '".ipynb*"', ".vim"])
+        remote = f"{directory}"
         local = directory
         if local == ".":
             local = os.getcwd()
-        command = f"rsync -v --stats --progress -r {self.username}@{self.host}:{remote} {local}"
+        command = f"rsync -v --stats --progress {exclude} -r {self.username}@{self.host}:{remote} {local}"
         if self.verbose:
             print (command)
+
         os.system(command)
         os.system(f"ls -lisa {directory}")
 
